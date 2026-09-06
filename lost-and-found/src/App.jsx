@@ -10,9 +10,27 @@ function App() {
           <a href="#">Report Found</a>
         </nav>
       </header>
-      <h1>Lost and Found</h1>
-      <p>Find what you lost. Return what you found.</p>
+      <section className="hero">
+        <div className="hero-text">
+          <p className="small-heading">CAMPUS LOST & FOUND</p>
+          <h1>
+            Lost something?
+            <br />
+            Let's find it
+          </h1>
+          <p>
+            Report lost or found items around campus
+            and help get them back to their owners.
+          </p>
+        <div className="buttons">
+          <button>Report Lost Item</button>
+          <button>Report Found Item</button>
+        </div>
+      </div>
+    </section>
     </div>
+    
+   
   )
 }
 export default App
