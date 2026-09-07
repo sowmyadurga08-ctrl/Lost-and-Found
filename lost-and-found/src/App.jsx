@@ -1,6 +1,35 @@
+import { useState } from 'react'
 import './App.css'
 
 function App() {
+  const [search, setSearch] = useState('')
+    const items = [
+    {
+      name: 'iPhone',
+      location: 'Block A',
+      status: 'Lost',
+      icon: '📱',
+      category: 'Electronics'
+    },
+    {
+      name: 'Keys',
+      location: 'Library',
+      status: 'Found',
+      icon: '🔑',
+      category: 'Keys'
+    },
+    {
+      name: 'AirPods',
+      location: 'Cafeteria',
+      status: 'Lost',
+      icon: '🎧',
+      category: 'Electronics'
+    }
+  ]
+    const filteredItems = items.filter((item) =>
+    item.name.toLowerCase().includes(search.toLowerCase())
+  )
+
   return (
     <div className="app">
 
@@ -34,6 +63,8 @@ function App() {
             <input
               type="text"
               placeholder="Search for an item..."
+              value={search}
+              onChange={(e) => setSearch(e.target.value)}
             />
           </div>
 
@@ -62,24 +93,21 @@ function App() {
             <a href="#">View all</a>
           </div>
           <div className="items">
-            <div className="item-card">
-              <div className="item-icon">📱</div>
-              <h3>iphone</h3>
-              <p>Block A</p>
-              <span className="lost">Lost</span>
-            </div>
-            <div className="item-card">
-              <div className="item-icon">🔑</div>
-              <h3>Keys</h3>
-              <p>Library</p>
-              <span className="found">FOUND</span>
-            </div>
-            <div className="item-card">
-              <div className="item-icon">🎧</div>
-              <h3>Airpods</h3>
-              <p>Cafeteria</p>
-              <span className="lost">LOST</span>
-            </div>
+            {filteredItems.map((item) => (
+              <div className="item-card" key={item.name}>
+
+                <div className="item-icon">{item.icon}</div>
+
+                <h3>{item.name}</h3>
+
+                <p>{item.location}</p>
+
+                <span className={item.status === 'Lost' ? 'lost' : 'found'}>
+                  {item.status}
+                </span>
+
+              </div>
+            ))}
           </div>
         </section>
 
