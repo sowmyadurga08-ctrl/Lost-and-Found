@@ -352,3 +352,9 @@
   font-size: 14px;
   line-height: 1.6;
 }
+
+.categories button.active {
+  background: #a9563f;
+  border-color: #a9563f;
+  color: #fff9ef;
+}

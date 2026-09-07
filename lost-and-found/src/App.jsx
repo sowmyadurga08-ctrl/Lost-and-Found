@@ -3,6 +3,7 @@ import './App.css'
 
 function App() {
   const [search, setSearch] = useState('')
+  const [category, setCategory] = useState('All')
     const items = [
     {
       name: 'iPhone',
@@ -26,9 +27,12 @@ function App() {
       category: 'Electronics'
     }
   ]
-    const filteredItems = items.filter((item) =>
-    item.name.toLowerCase().includes(search.toLowerCase())
-  )
+    const filteredItems = items.filter((item) => {
+      const matchesSearch = item.name.toLowerCase().includes(search.toLowerCase())
+      const matchesCategory = category === 'All' || item.category === category
+
+      return matchesSearch && matchesCategory
+    })
 
   return (
     <div className="app">
@@ -69,11 +73,34 @@ function App() {
           </div>
 
           <div className="categories">
-            <button>All</button>
-            <button>Electronics</button>
-            <button>Keys</button>
-            <button>Bags</button>
-          </div>
+            <button
+              className={category === 'All' ? 'active' : ''}
+              onClick={() => setCategory('All')}
+            >
+              All
+              </button>
+
+              <button
+              className={category === 'Electronics' ? 'active' : ''}
+              onClick={() => setCategory('Electronics')}
+         >
+              Electronics
+          </button>
+
+          <button
+            className={category === 'Keys' ? 'active' : ''}
+            onClick={() => setCategory('Keys')}
+        >
+          Keys
+        </button>
+
+        <button
+          className={category === 'Bags' ? 'active' : ''}
+          onClick={() => setCategory('Bags')}
+        >
+          Bags
+        </button>
+      </div>
 
           <p className="report-text">Can't find it?</p>
 
