@@ -115,7 +115,41 @@ function App() {
             </div>
           </div>
         </div>
+                </section>
+
+        <section className="how-it-works">
+
+          <div className="section-heading">
+            <div>
+              <p className="eyebrow">HOW IT WORKS</p>
+              <h2>From lost to found.</h2>
+            </div>
+          </div>
+
+          <div className="steps">
+
+            <div className="step">
+              <span>01</span>
+              <h3>Report</h3>
+              <p>Tell us what you lost or found and where it happened.</p>
+            </div>
+
+            <div className="step">
+              <span>02</span>
+              <h3>We match</h3>
+              <p>Our system compares reports and finds possible matches.</p>
+            </div>
+
+            <div className="step">
+              <span>03</span>
+              <h3>Reunite</h3>
+              <p>Check the match and connect to get the item back.</p>
+            </div>
+
+          </div>
+
         </section>
+
       </main>
 
     </div>
