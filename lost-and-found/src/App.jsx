@@ -4,6 +4,7 @@ import './App.css'
 function App() {
   const [search, setSearch] = useState('')
   const [category, setCategory] = useState('All')
+  const [selectedItem, setSelectedItem] = useState(null)
     const items = [
     {
       name: 'iPhone',
@@ -33,6 +34,39 @@ function App() {
 
       return matchesSearch && matchesCategory
     })
+    if (selectedItem) {
+    return (
+      <div className="app">
+        <main className="item-details">
+          <button onClick={() => setSelectedItem(null)}>
+            ← Back to items
+          </button>
+
+          <div className="details-icon">
+            {selectedItem.icon}
+          </div>
+
+          <p className={selectedItem.status === 'Lost' ? 'lost' : 'found'}>
+            {selectedItem.status}
+          </p>
+
+          <h1>{selectedItem.name}</h1>
+
+          <p className="details-location">
+            📍 {selectedItem.location}
+          </p>
+
+          <div className="details-card">
+            <h2>Item details</h2>
+            <p>Category: {selectedItem.category}</p>
+            <p>Location: {selectedItem.location}</p>
+            <p>Status: {selectedItem.status}</p>
+          </div>
+
+        </main>
+      </div>
+    )
+  }
 
   return (
     <div className="app">
@@ -121,7 +155,11 @@ function App() {
           </div>
           <div className="items">
             {filteredItems.map((item) => (
-              <div className="item-card" key={item.name}>
+              <div
+                className="item-card"
+                key={item.name}
+                onClick={() => setSelectedItem(item)}
+              >
 
                 <div className="item-icon">{item.icon}</div>
 
