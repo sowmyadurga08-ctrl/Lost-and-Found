@@ -6,6 +6,7 @@ function App() {
   const [category, setCategory] = useState('All')
   const [selectedItem, setSelectedItem] = useState(null)
   const [view, setView] = useState('home')
+  const [previousView, setPreviousView] = useState('home')
   const [itemName, setItemName] = useState('')
   const [itemCategory, setItemCategory] = useState('')
   const [description, setDescription] = useState('')
@@ -131,6 +132,139 @@ const getMatchReasons = (lostItem, foundItem) => {
 
       return matchesSearch && matchesCategory
     })
+
+    if (selectedItem) {
+      return (
+      <div className="app">
+        <main className="item-details">
+          <button
+            onClick={() => {
+              setSelectedItem(null)
+              setView(previousView)
+            }}
+          >
+           ← Back
+          </button>
+
+          <div className="details-icon">
+            {selectedItem.icon}
+          </div>
+
+          <p className={selectedItem.status === 'Lost' ? 'lost' : 'found'}>
+            {selectedItem.status}
+          </p>
+
+          <h1>{selectedItem.name}</h1>
+
+          <p className="details-location">
+            📍 {selectedItem.location}
+          </p>
+
+          <div className="details-card">
+            <h2>Item details</h2>
+
+            <p>
+              <strong>Status:</strong> {selectedItem.status}
+            </p>
+
+            <p>
+              <strong>Category:</strong> {selectedItem.category}
+            </p>
+
+            <p>
+              <strong>Location:</strong> {selectedItem.location}
+            </p>
+
+            <p>
+              <strong>Description:</strong> {selectedItem.description || 'No description provided'}
+            </p>
+
+            <p>
+              <strong>Date & Time:</strong> {selectedItem.dateTime || 'Not provided'}
+            </p>
+          </div>
+
+        </main>
+      </div>
+    )
+  }
+
+    if (view === 'browse') {
+  return (
+    <div className="app">
+      <main className="item-details">
+        <button onClick={() => setView('home')}>
+          ← Back to home
+        </button>
+
+        <p className="eyebrow">CAMPUS ACTIVITY</p>
+        <h1>Browse items</h1>
+        <div className="search-box">
+  <span>⌕</span>
+  <input
+    type="text"
+    placeholder="Search for an item..."
+    value={search}
+    onChange={(e) => setSearch(e.target.value)}
+  />
+</div>
+
+<div className="categories">
+  <button
+    className={category === 'All' ? 'active' : ''}
+    onClick={() => setCategory('All')}
+  >
+    All
+  </button>
+
+  <button
+    className={category === 'Electronics' ? 'active' : ''}
+    onClick={() => setCategory('Electronics')}
+  >
+    Electronics
+  </button>
+
+  <button
+    className={category === 'Keys' ? 'active' : ''}
+    onClick={() => setCategory('Keys')}
+  >
+    Keys
+  </button>
+
+  <button
+    className={category === 'Bags' ? 'active' : ''}
+    onClick={() => setCategory('Bags')}
+  >
+    Bags
+  </button>
+</div>
+
+        <div className="items">
+          {filteredItems.map((item) => (
+            <div
+              className="item-card"
+              key={item.name}
+              onClick={() => {
+                setPreviousView('browse')
+                setSelectedItem(item)
+              }}
+            >
+              <div className="item-icon">{item.icon}</div>
+
+              <h3>{item.name}</h3>
+
+              <p>{item.location}</p>
+
+              <span className={item.status === 'Lost' ? 'lost' : 'found'}>
+                {item.status}
+              </span>
+            </div>
+          ))}
+        </div>
+      </main>
+    </div>
+  )
+}
         if (view === 'report-lost') {
       return (
         <div className="app">
@@ -227,40 +361,7 @@ const getMatchReasons = (lostItem, foundItem) => {
       )
     }
 
-    if (selectedItem) {
-      return (
-      <div className="app">
-        <main className="item-details">
-          <button onClick={() => setSelectedItem(null)}>
-            ← Back to items
-          </button>
-
-          <div className="details-icon">
-            {selectedItem.icon}
-          </div>
-
-          <p className={selectedItem.status === 'Lost' ? 'lost' : 'found'}>
-            {selectedItem.status}
-          </p>
-
-          <h1>{selectedItem.name}</h1>
-
-          <p className="details-location">
-            📍 {selectedItem.location}
-          </p>
-
-          <div className="details-card">
-            <h2>Item details</h2>
-            <p>Category: {selectedItem.category}</p>
-            <p>Location: {selectedItem.location}</p>
-            <p>Status: {selectedItem.status}</p>
-          </div>
-
-        </main>
-      </div>
-    )
-  }
-
+    
   return (
     <div className="app">
 
@@ -268,7 +369,15 @@ const getMatchReasons = (lostItem, foundItem) => {
         <h2>Lost & Found</h2>
 
         <nav>
-          <a href="#">Browse</a>
+          <a
+            href="#"
+            onClick={(e) => {
+              e.preventDefault()
+              setView('browse')
+            }}
+          >
+            Browse
+          </a>
           <a href="#">My Reports</a>
         </nav>
       </header>
@@ -367,7 +476,10 @@ const getMatchReasons = (lostItem, foundItem) => {
               <div
                 className="item-card"
                 key={item.name}
-                onClick={() => setSelectedItem(item)}
+                onClick={() => {
+                  setPreviousView('home')
+                  setSelectedItem(item)
+                }}
               >
 
                 <div className="item-icon">{item.icon}</div>
