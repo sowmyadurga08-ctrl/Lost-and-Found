@@ -1,11 +1,101 @@
 import { useState } from 'react'
 import './App.css'
 
+function LoginPage({ onBack }) {
+  const [email, setEmail] = useState('')
+  const [password, setPassword] = useState('')
+
+  const handleLogin = (event) => {
+    event.preventDefault()
+
+    console.log('Login attempted:', email)
+
+    alert('Login functionality will be connected soon.')
+  }
+
+  return (
+    <div className="login-page">
+
+      <div className="login-visual">
+        <img
+          src="/images/sherlock-login.png"
+          alt="Mr.Sherlock Lost and Found"
+        />
+      </div>
+
+      <div className="login-section">
+
+        <div className="login-card">
+
+          <div className="login-logo">
+            Mr.Sherlock
+          </div>
+
+          <h1>Welcome Back</h1>
+
+          <p className="login-subtitle">
+            Sign in to report items, track your reports,
+            and find what you lost.
+          </p>
+
+          <form className="login-form" onSubmit={handleLogin}>
+
+            <label>Email address</label>
+
+            <input
+              type="email"
+              placeholder="Enter your email"
+              value={email}
+              onChange={(event) => setEmail(event.target.value)}
+              required
+            />
+
+            <label>Password</label>
+
+            <input
+              type="password"
+              placeholder="Enter your password"
+              value={password}
+              onChange={(event) => setPassword(event.target.value)}
+              required
+            />
+
+            <button
+              type="submit"
+              className="login-button"
+            >
+              Sign In →
+            </button>
+
+          </form>
+
+          <p className="login-switch">
+            Don't have an account?{' '}
+            <button type="button">
+              Sign Up
+            </button>
+          </p>
+
+          <button
+            className="login-back"
+            onClick={onBack}
+          >
+            Continue as Guest →
+          </button>
+
+        </div>
+
+      </div>
+
+    </div>
+  )
+}
+
 function App() {
   const [search, setSearch] = useState('')
   const [category, setCategory] = useState('All')
   const [selectedItem, setSelectedItem] = useState(null)
-  const [view, setView] = useState('home')
+  const [view, setView] = useState('login')
   const [previousView, setPreviousView] = useState('home')
   const [itemName, setItemName] = useState('')
   const [itemCategory, setItemCategory] = useState('')
@@ -14,6 +104,7 @@ function App() {
   const [dateTime, setDateTime] = useState('')
   const [reportType, setReportType] = useState('Lost')
     const [items, setItems] = useState([
+      
     {
       name: 'iPhone',
       location: 'Block A',
@@ -45,20 +136,42 @@ function App() {
   const calculateMatch = (lostItem, foundItem) => {
   let score = 0
 
+  const lostName = lostItem.name.toLowerCase().trim()
+  const foundName = foundItem.name.toLowerCase().trim()
+
   if (lostItem.category === foundItem.category) {
     score += 25
   }
 
-  if (lostItem.name.toLowerCase() === foundItem.name.toLowerCase()) {
+  // Smart item-name matching
+  if (lostName === foundName) {
     score += 25
+  } else if (
+    lostName.includes(foundName) ||
+    foundName.includes(lostName)
+  ) {
+    score += 20
+  } else {
+    const lostWords = lostName.split(/\s+/)
+    const foundWords = foundName.split(/\s+/)
+
+    const commonWords = lostWords.filter((word) =>
+      foundWords.includes(word)
+    )
+
+    if (commonWords.length > 0) {
+      score += 15
+    }
   }
 
   if (lostItem.location.toLowerCase() === foundItem.location.toLowerCase()) {
     score += 20
   }
 
-  if (lostItem.description.toLowerCase().includes(foundItem.description.toLowerCase()) ||
-      foundItem.description.toLowerCase().includes(lostItem.description.toLowerCase())) {
+  if (
+    lostItem.description.toLowerCase().includes(foundItem.description.toLowerCase()) ||
+    foundItem.description.toLowerCase().includes(lostItem.description.toLowerCase())
+  ) {
     score += 15
   }
 
@@ -66,7 +179,8 @@ function App() {
     const lostTime = new Date(lostItem.dateTime)
     const foundTime = new Date(foundItem.dateTime)
 
-    const difference = Math.abs(lostTime - foundTime) / (1000 * 60)
+    const difference =
+      Math.abs(lostTime - foundTime) / (1000 * 60)
 
     if (difference <= 30) {
       score += 15
@@ -97,9 +211,24 @@ const getMatchReasons = (lostItem, foundItem) => {
     reasons.push('Same category')
   }
 
-  if (lostItem.name.toLowerCase() === foundItem.name.toLowerCase()) {
+  const lostName = lostItem.name.toLowerCase().trim()
+  const foundName = foundItem.name.toLowerCase().trim()
+
+  if (lostName === foundName) {
     reasons.push('Same item name')
+  } else if (
+    lostName.includes(foundName) ||
+    foundName.includes(lostName)
+  ) {
+    reasons.push('Similar item name')
+  } else {
+    const lostWords = lostName.split(/\s+/)
+    const foundWords = foundName.split(/\s+/)
+
+  if (lostWords.some((word) => foundWords.includes(word))) {
+    reasons.push('Related item name')
   }
+}
 
   if (lostItem.location.toLowerCase() === foundItem.location.toLowerCase()) {
     reasons.push('Same location')
@@ -188,7 +317,13 @@ const getMatchReasons = (lostItem, foundItem) => {
       </div>
     )
   }
-
+  if (view === 'login') {
+  return (
+    <LoginPage
+      onBack={() => setView('home')}
+    />
+  )
+}
     if (view === 'browse') {
   return (
     <div className="app">
@@ -240,7 +375,7 @@ const getMatchReasons = (lostItem, foundItem) => {
 </div>
 
         <div className="items">
-          {filteredItems.map((item) => (
+          {filteredItems.slice(0, 3).map((item) => (
             <div
               className="item-card"
               key={item.name}
@@ -366,7 +501,7 @@ const getMatchReasons = (lostItem, foundItem) => {
     <div className="app">
 
       <header className="navbar">
-        <h2>Lost & Found</h2>
+        <h2>Mr.Sherlock</h2>
 
         <nav>
           <a
@@ -379,6 +514,12 @@ const getMatchReasons = (lostItem, foundItem) => {
             Browse
           </a>
           <a href="#">My Reports</a>
+          <button
+            className="login-nav"
+            onClick={() => setView('login')}
+          >
+            Sign In
+          </button>
         </nav>
       </header>
 
@@ -469,7 +610,15 @@ const getMatchReasons = (lostItem, foundItem) => {
               <p className="eyebrow">CAMPUS ACTIVITY</p>
               <h2>Recently reported</h2>
             </div>
-            <a href="#">View all</a>
+            <a
+  href="#"
+  onClick={(e) => {
+    e.preventDefault()
+    setView('browse')
+  }}
+>
+  View all
+</a>
           </div>
           <div className="items">
             {filteredItems.map((item) => (
@@ -503,7 +652,12 @@ const getMatchReasons = (lostItem, foundItem) => {
               <p className="eyebrow">SMART MATCHING</p>
               <h2>Possible matches</h2>
             </div>
-            <a href="#">View all</a>
+            <button
+              className="view-all-button"
+              onClick={() => setView('browse')}
+            >
+              View all
+            </button>
           </div>
           <div className="match-items">
             {possibleMatches.map((match, index) => (
