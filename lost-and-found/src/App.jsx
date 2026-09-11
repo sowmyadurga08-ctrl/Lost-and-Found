@@ -21,7 +21,7 @@ function LoginPage({ onBack, onLogin }) {
 
       <div className="login-visual">
         <img
-          src="/images/sherlock-login.png"
+          src={`${import.meta.env.BASE_URL}images/sherlock-login.png`}
           alt="Mr.Sherlock Lost and Found"
         />
       </div>
