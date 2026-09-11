@@ -1,17 +1,20 @@
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import './App.css'
 
-function LoginPage({ onBack }) {
+function LoginPage({ onBack, onLogin }) {
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
-
+  
   const handleLogin = (event) => {
-    event.preventDefault()
+  event.preventDefault()
 
-    console.log('Login attempted:', email)
-
-    alert('Login functionality will be connected soon.')
+  if (email === 'demo@mrsherlock.com' && password === 'sherlock123') {
+    alert('Login successful!')
+    onLogin()
+  } else {
+    alert('Invalid email or password.')
   }
+}
 
   return (
     <div className="login-page">
@@ -100,39 +103,24 @@ function App() {
   const [itemName, setItemName] = useState('')
   const [itemCategory, setItemCategory] = useState('')
   const [description, setDescription] = useState('')
+  const [phone, setPhone] = useState('')
   const [location, setLocation] = useState('')
   const [dateTime, setDateTime] = useState('')
   const [reportType, setReportType] = useState('Lost')
-    const [items, setItems] = useState([
-      
-    {
-      name: 'iPhone',
-      location: 'Block A',
-      status: 'Lost',
-      icon: '📱',
-      category: 'Electronics',    
-      description: 'Black iPhone with a clear case',
-      dateTime: '2026-09-09T14:00'
-    },
-    {
-      name: 'Keys',
-      location: 'Library',
-      status: 'Found',
-      icon: '🔑',
-      category: 'Keys',
-      description: 'A set of three silver keys',
-      dateTime: '2026-09-09T12:30'
-    },
-    {
-      name: 'AirPods',
-      location: 'Cafeteria',
-      status: 'Lost',
-      icon: '🎧',
-      category: 'Electronics',  
-      description: 'White AirPods in a white charging case',
-      dateTime: '2026-09-09T15:00'
-    }
-  ])
+  const [isLoggedIn, setIsLoggedIn] = useState(false)
+    const [items, setItems] = useState(() => {
+  const savedItems = localStorage.getItem('items')
+
+  if (savedItems) {
+    return JSON.parse(savedItems)
+  }
+
+  return []
+})
+
+useEffect(() => {
+  localStorage.setItem('items', JSON.stringify(items))
+}, [items])
   const calculateMatch = (lostItem, foundItem) => {
   let score = 0
 
@@ -309,6 +297,10 @@ const getMatchReasons = (lostItem, foundItem) => {
             </p>
 
             <p>
+              <strong>Phone:</strong> {selectedItem.phone || 'Not provided'}
+            </p>
+
+            <p>
               <strong>Date & Time:</strong> {selectedItem.dateTime || 'Not provided'}
             </p>
           </div>
@@ -317,10 +309,14 @@ const getMatchReasons = (lostItem, foundItem) => {
       </div>
     )
   }
-  if (view === 'login') {
+ if (view === 'login') {
   return (
     <LoginPage
       onBack={() => setView('home')}
+      onLogin={() => {
+        setIsLoggedIn(true)
+        setView('home')
+      }}
     />
   )
 }
@@ -375,7 +371,7 @@ const getMatchReasons = (lostItem, foundItem) => {
 </div>
 
         <div className="items">
-          {filteredItems.slice(0, 3).map((item) => (
+          {filteredItems.map((item) => (
             <div
               className="item-card"
               key={item.name}
@@ -449,6 +445,16 @@ const getMatchReasons = (lostItem, foundItem) => {
                 onChange={(e) => setDescription(e.target.value)}
               ></textarea>
 
+              <label>Phone number</label>
+
+              <input
+                type="tel"
+                placeholder="Enter your phone number"
+                value={phone}
+                onChange={(e) => setPhone(e.target.value)}
+                required
+              />
+
               <label>Location</label>
               <input
                 type="text"
@@ -474,6 +480,7 @@ const getMatchReasons = (lostItem, foundItem) => {
                     icon: '📦',
                     category: itemCategory,
                     description: description,
+                    phone: phone,
                     dateTime: dateTime
                   }
 
@@ -483,6 +490,7 @@ const getMatchReasons = (lostItem, foundItem) => {
                   setItemName('')
                   setItemCategory('')
                   setDescription('')
+                  setPhone('')
                   setLocation('')
                   setDateTime('')
                 }}
@@ -504,23 +512,22 @@ const getMatchReasons = (lostItem, foundItem) => {
         <h2>Mr.Sherlock</h2>
 
         <nav>
-          <a
-            href="#"
-            onClick={(e) => {
-              e.preventDefault()
-              setView('browse')
-            }}
-          >
-            Browse
-          </a>
-          <a href="#">My Reports</a>
-          <button
-            className="login-nav"
-            onClick={() => setView('login')}
-          >
-            Sign In
-          </button>
-        </nav>
+  <button
+    className="nav-link"
+    onClick={() => setView('browse')}
+  >
+    Browse
+  </button>
+
+  {!isLoggedIn && (
+    <button
+      className="login-nav"
+      onClick={() => setView('login')}
+    >
+      Sign In
+    </button>
+  )}
+</nav>
       </header>
 
       <main>
@@ -610,18 +617,16 @@ const getMatchReasons = (lostItem, foundItem) => {
               <p className="eyebrow">CAMPUS ACTIVITY</p>
               <h2>Recently reported</h2>
             </div>
-            <a
-  href="#"
-  onClick={(e) => {
-    e.preventDefault()
-    setView('browse')
-  }}
->
-  View all
-</a>
+            
+            <button
+              className="view-all-button"
+              onClick={() => setView('browse')}
+            >
+              View all
+            </button>
           </div>
           <div className="items">
-            {filteredItems.map((item) => (
+            {filteredItems.slice(0, 3).map((item) => (
               <div
                 className="item-card"
                 key={item.name}
